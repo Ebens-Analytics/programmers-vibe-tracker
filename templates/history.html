@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Vibe History</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>History</h2>
+    
+    <canvas id="vibeChart"></canvas>
+
+    <a href="/">← Back</a>
+    <br><br>
+
+    {% if rows %}
+        <svg width="350" height="150" style="background:#ecf0f1;border-radius:6px;">
+            {% for entry in rows %}
+                {% set x = loop.index0 * 30 %}
+                <circle cx="{{ x+20 }}" cy="{{ 150 - entry[1]*10 }}" r="4" fill="blue"/>
+            {% endfor %}
+        </svg>
+
+        <ul>
+            {% for r in rows %}
+                <li>{{ r[0] }} → Mood: {{ r[1] }}, Energy: {{ r[2] }}, Focus: {{ r[3] }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No entries yet.</p>
+    {% endif %}
+</div>
+    
+    
+    <script>
+const ctx = document.getElementById('vibeChart').getContext('2d');
+
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: {{ dates | safe }},
+    datasets: [
+      {
+        label: 'Mood',
+        data: {{ moods | safe }},
+        borderWidth: 2,
+        tension: 0.4
+      },
+      {
+        label: 'Energy',
+        data: {{ energies | safe }},
+        borderWidth: 2,
+        tension: 0.4
+      },
+      {
+        label: 'Focus',
+        data: {{ focus | safe }},
+        borderWidth: 2,
+        tension: 0.4
+      }
+    ]
+  }
+});
+</script>
+</body>
+</html>
